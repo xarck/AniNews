@@ -9,4 +9,4 @@ async function postOnReddit() {
     });
 }
 
-setInterval(postOnReddit, 900000);
+postOnReddit();

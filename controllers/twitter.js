@@ -1,5 +1,6 @@
 const axios = require("axios");
 const Tweet = require("../models/tweet.js");
+require("dotenv").config();
 const tweets = [];
 
 var headers = {
