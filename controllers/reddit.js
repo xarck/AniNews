@@ -8,7 +8,7 @@ async function getToken() {
         username: "aninewsbot",
         password: process.env.REDDIT_PASSWORD,
     };
-    var urls = base_url + "api/v1/access_token";
+    var urls = base_url + "/api/v1/access_token";
     return await axios
         .post(urls, data, {
             auth: {
