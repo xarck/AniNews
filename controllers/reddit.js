@@ -1,4 +1,6 @@
 const axios = require("axios");
+require("dotenv").config();
+
 async function getToken() {
     var base_url = "https://www.reddit.com/";
     var data = {
@@ -23,12 +25,11 @@ async function getToken() {
 }
 
 async function submitPost(title, url) {
-    var data = {
+    var params = {
         sr: "aninewsnet",
         title,
         url,
     };
-    console.log(title);
     var tok = await getToken();
 
     var token = `bearer ${tok}`;
@@ -41,7 +42,7 @@ async function submitPost(title, url) {
             "https://oauth.reddit.com/api/submit",
             {},
             {
-                params: data,
+                params: params,
                 headers: headers,
             }
         )
