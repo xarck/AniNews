@@ -1,11 +1,12 @@
 const { fetch } = require("./controllers/twitter");
-const { submitPost } = require("./controllers/reddit");
+const { submitPost, getToken } = require("./controllers/reddit");
 require("dotenv").config();
 
 async function postOnReddit() {
     var tweets = await fetch();
+    var token = await getToken();
     tweets.forEach((tweet) => {
-        submitPost(tweet.title, tweet.url);
+        submitPost(token, tweet.title, tweet.url);
     });
 }
 

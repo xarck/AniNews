@@ -10,14 +10,28 @@ var headers = {
     access_token_secret: process.env.ACCESS_TOKEN_SECRET,
     Authorization: `Bearer ${process.env.BEARER_TOKEN}`,
 };
+
+async function tweetLookUp(id) {
+    var url = "";
+    try {
+        var tweet = await axios.get(`https://api.twitter.com/2/tweets/${id}`, {
+            headers,
+        });
+        url = `https://twitter.com/aninewsnet/status/${tweet.data.data.id}`;
+    } catch (err) {
+        console.log(err.message);
+    }
+    return url;
+}
 async function fetch() {
     try {
         var animeNewsNet = await axios.get(
-            "https://api.twitter.com/2/users/24383563/tweets",
+            "https://api.twitter.com/2/users/24383563/tweets?max_results=5",
             { headers }
         );
+
         var mangaMogura = await await axios.get(
-            "https://api.twitter.com/2/users/1340979091202322432/tweets",
+            "https://api.twitter.com/2/users/1340979091202322432/tweets?max_results=5",
             { headers }
         );
         var animeTV = await await axios.get(
@@ -25,13 +39,13 @@ async function fetch() {
             { headers }
         );
         animeNewsNet.data.data.forEach((tweet) => {
-            tweets.push(new Tweet(tweet.id, tweet.text));
+            tweets.push(new Tweet(tweet.id, tweet.text, tweetLookUp(tweet.id)));
         });
         mangaMogura.data.data.forEach((tweet) => {
-            tweets.push(new Tweet(tweet.id, tweet.text));
+            tweets.push(new Tweet(tweet.id, tweet.text, tweetLookUp(tweet.id)));
         });
         animeTV.data.data.forEach((tweet) => {
-            tweets.push(new Tweet(tweet.id, tweet.text));
+            tweets.push(new Tweet(tweet.id, tweet.text, tweetLookUp(tweet.id)));
         });
         return tweets;
     } catch (err) {
@@ -39,4 +53,4 @@ async function fetch() {
     }
 }
 
-module.exports = { fetch };
+module.exports = { fetch, tweetLookUp };

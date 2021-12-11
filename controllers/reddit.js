@@ -21,18 +21,19 @@ async function getToken() {
                 password: process.env.REDDIT_PASSWORD,
             },
         })
-        .then((res) => res.data.access_token);
+        .then((res) => res.data.access_token)
+        .catch((err) => console.log(err.message));
 }
 
-async function submitPost(title, url) {
+async function submitPost(token, title, url) {
     var params = {
         sr: "aninewsnet",
         title,
         url,
     };
-    var tok = await getToken();
 
-    var token = `bearer ${tok}`;
+    var token = `bearer ${token}`;
+
     var headers = {
         Authorization: token,
         "User-Agent": "aninewsnet by aninewsbot",
@@ -46,8 +47,8 @@ async function submitPost(title, url) {
                 headers: headers,
             }
         )
-        .then((res) => res.data)
+        .then((res) => console.log(res.data))
         .catch((err) => console.log(err));
 }
 
-module.exports = { submitPost };
+module.exports = { submitPost, getToken };
