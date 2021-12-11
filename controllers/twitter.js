@@ -59,4 +59,4 @@ async function fetch() {
     }
 }
 
-module.exports = { fetch, tweetLookUp };
+module.exports = { fetch };
