@@ -47,7 +47,7 @@ async function submitPost(token, title, url) {
                 headers: headers,
             }
         )
-        .then((res) => console.log(res.data))
+        .then((res) => console.log(res.data.success))
         .catch((err) => console.log(err));
 }
 
