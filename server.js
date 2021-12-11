@@ -6,6 +6,7 @@ async function postOnReddit() {
     var tweets = await fetch();
     var token = await getToken();
     tweets.forEach((tweet) => {
+        console.log(tweet.url);
         submitPost(token, tweet.title, tweet.url);
     });
 }
