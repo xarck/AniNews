@@ -1,4 +1,6 @@
 const axios = require("axios");
+const { fetch } = require("./twitter");
+
 require("dotenv").config();
 
 async function getToken() {
@@ -51,4 +53,13 @@ async function submitPost(token, title, url) {
         .catch((err) => console.log(err));
 }
 
-module.exports = { submitPost, getToken };
+async function postOnReddit() {
+    var tweets = await fetch();
+    var token = await getToken();
+    if (tweets.length > 0) {
+        tweets.forEach((tweet) => {
+            submitPost(token, tweet.title, tweet.url);
+        });
+    }
+}
+module.exports = { postOnReddit };

@@ -1,9 +1,7 @@
 const axios = require("axios");
 const Tweet = require("../models/tweet.js");
-const NodeCache = require("node-cache");
-const myCache = new NodeCache();
+const { store, read } = require("../utils/storage");
 require("dotenv").config();
-const tweets = [];
 
 var headers = {
     consumer_key: process.env.CONSUMER_KEY,
@@ -14,7 +12,10 @@ var headers = {
 };
 
 async function fetch() {
+    const tweets = [];
     try {
+        var lastFetchID = read();
+
         var animeNewsNet = await axios.get(
             "https://api.twitter.com/2/users/36178012/tweets?max_results=5",
             { headers }
@@ -26,12 +27,12 @@ async function fetch() {
         );
 
         var animeTV = await axios.get(
-            "https://api.twitter.com/2/users/748185667860111360/tweets",
+            "https://api.twitter.com/2/users/748185667860111360/tweets?max_results=5",
             { headers }
         );
-        var animeNewsNetID = myCache.get("animeNetworkID");
-        var animeTVID = myCache.get("animeTVID");
-        var mangaMoguraID = myCache.get("mangaMoguraID");
+        var animeNewsNetID = lastFetchID["animeNetworkID"];
+        var animeTVID = lastFetchID["animeTVID"];
+        var mangaMoguraID = lastFetchID["mangaMoguraID"];
 
         animeNewsNet.data.data.forEach((tweet) => {
             if (tweet.id > animeNewsNetID) {
@@ -56,6 +57,7 @@ async function fetch() {
                 );
             }
         });
+
         animeTV.data.data.forEach((tweet) => {
             if (tweet.id > animeTVID) {
                 tweets.push(
@@ -67,11 +69,11 @@ async function fetch() {
                 );
             }
         });
-        myCache.mset([
-            { key: "animeNetworkID", val: animeNewsNet.data.data[0].id },
-            { key: "mangaMoguraID", val: mangaMogura.data.data[0].id },
-            { key: "animeTVID", val: animeTV.data.data[0].id },
-        ]);
+
+        lastFetchID["animeNetworkID"] = animeNewsNet.data.data[0].id;
+        lastFetchID["mangaMoguraID"] = mangaMogura.data.data[0].id;
+        lastFetchID["animeTVID"] = animeTV.data.data[0].id;
+        store(lastFetchID);
         return tweets;
     } catch (err) {
         console.log(err.message);
