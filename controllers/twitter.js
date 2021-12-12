@@ -1,7 +1,18 @@
 const axios = require("axios");
 const Tweet = require("../models/tweet.js");
-const { store, read } = require("../utils/storage");
+const redis = require("redis");
 require("dotenv").config();
+const { createClient } = require("redis");
+
+const client = createClient({
+    url: process.env.REDISCLOUD_URL,
+});
+
+(async () => {
+    client.on("error", (err) => console.log("Redis Client Error", err));
+
+    await client.connect();
+})();
 
 var headers = {
     consumer_key: process.env.CONSUMER_KEY,
@@ -14,8 +25,6 @@ var headers = {
 async function fetch() {
     const tweets = [];
     try {
-        var lastFetchID = read();
-
         var animeNewsNet = await axios.get(
             "https://api.twitter.com/2/users/36178012/tweets?max_results=5",
             { headers }
@@ -30,10 +39,18 @@ async function fetch() {
             "https://api.twitter.com/2/users/748185667860111360/tweets?max_results=5",
             { headers }
         );
-        var animeNewsNetID = lastFetchID["animeNetworkID"];
-        var animeTVID = lastFetchID["animeTVID"];
-        var mangaMoguraID = lastFetchID["mangaMoguraID"];
-
+        var animeNewsNetID = await client.get("animeNetId", (err, val) => {
+            if (err) throw err;
+            return val.toString();
+        });
+        var animeTVID = await client.get("animeTVId", (err, val) => {
+            if (err) throw err;
+            return val.toString();
+        });
+        var mangaMoguraID = await client.get("mangaMoguraId", (err, val) => {
+            if (err) throw err;
+            return val.toString();
+        });
         animeNewsNet.data.data.forEach((tweet) => {
             if (tweet.id > animeNewsNetID) {
                 tweets.push(
@@ -70,10 +87,10 @@ async function fetch() {
             }
         });
 
-        lastFetchID["animeNetworkID"] = animeNewsNet.data.data[0].id;
-        lastFetchID["mangaMoguraID"] = mangaMogura.data.data[0].id;
-        lastFetchID["animeTVID"] = animeTV.data.data[0].id;
-        store(lastFetchID);
+        await client.set("animeNetId", animeNewsNet.data.data[0].id);
+        await client.set("mangaMoguraId", mangaMogura.data.data[0].id);
+        await client.set("animeTVId", animeTV.data.data[0].id);
+
         return tweets;
     } catch (err) {
         console.log(err.message);
