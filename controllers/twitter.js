@@ -31,7 +31,7 @@ async function fetch() {
                 new Tweet(
                     tweet.id,
                     tweet.text,
-                    `https://twitter.com/aninewsnet/status/${tweet.id}`
+                    `https://twitter.com/Anime/status/${tweet.id}`
                 )
             );
         });
@@ -40,7 +40,7 @@ async function fetch() {
                 new Tweet(
                     tweet.id,
                     tweet.text,
-                    `https://twitter.com/aninewsnet/status/${tweet.id}`
+                    `https://twitter.com/MangaMoguraRE/status/${tweet.id}`
                 )
             );
         });
@@ -49,7 +49,7 @@ async function fetch() {
                 new Tweet(
                     tweet.id,
                     tweet.text,
-                    `https://twitter.com/aninewsnet/status/${tweet.id}`
+                    `https://twitter.com/animetv_jp/status/${tweet.id}`
                 )
             );
         });
