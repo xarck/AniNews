@@ -29,7 +29,7 @@ async function getToken() {
 
 async function submitPost(token, title, url) {
     var params = {
-        sr: "aninewsnet",
+        sr: process.env.SUB_NAME,
         title,
         url,
     };
